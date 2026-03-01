@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
+import { createClient } from '@/utils/supabase/client'; // Solo lo usamos para cargar los combos/categorías iniciales
+import { crearProductoAction } from '@/app/actions/adminActions';
+import { Categoria, Producto } from '@/types'; // Importando los tipos que creamos
 
 export default function TabCrearProducto() {
-  const supabase = createClient();
   const [loading, setLoading] = useState(false);
-  const [categorias, setCategorias] = useState<any[]>([]);
-  const [productosActivos, setProductosActivos] = useState<any[]>([]);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [productosActivos, setProductosActivos] = useState<Producto[]>([]);
 
   // Estados del formulario
   const [isBasket, setIsBasket] = useState(false);
@@ -16,35 +17,36 @@ export default function TabCrearProducto() {
   const [categoriaId, setCategoriaId] = useState('');
   const [imagen, setImagen] = useState<File | null>(null);
 
-  // Estados dinámicos (Arrays)
+  // Estados dinámicos
   const [variantes, setVariantes] = useState([{ unidad: 'Libra', precio: '' }]);
   const [basketIngredients, setBasketIngredients] = useState<{nombre: string, qty: number}[]>([]);
   const [basketSelect, setBasketSelect] = useState('');
   const [basketQty, setBasketQty] = useState(1);
 
+  // Carga inicial de datos de referencia
   useEffect(() => {
+    const supabase = createClient();
     const cargarDatos = async () => {
       const { data: catData } = await supabase.from('categorias').select('*');
       if (catData) {
-        setCategorias(catData);
+        setCategorias(catData as Categoria[]);
         if (catData.length > 0) setCategoriaId(catData[0].id.toString());
       }
       const { data: prodData } = await supabase.from('productos').select('id, nombre').eq('activo', true).order('nombre');
-      if (prodData) setProductosActivos(prodData);
+      if (prodData) setProductosActivos(prodData as Producto[]);
     };
     cargarDatos();
   }, []);
 
-  // Manejo de Variantes
+  // --- MANEJO DE ESTADOS (Igual a tu código original) ---
   const addVariant = () => setVariantes([...variantes, { unidad: '', precio: '' }]);
   const removeVariant = (index: number) => setVariantes(variantes.filter((_, i) => i !== index));
   const updateVariant = (index: number, field: string, value: string) => {
     const nuevas = [...variantes];
-    nuevas[index] = { ...nuevas[index], [field]: value };
+    nuevas[index] = { ...nuevas[index] as any, [field]: value };
     setVariantes(nuevas);
   };
 
-  // Manejo de Canastas
   const addIngredient = () => {
     if (!basketSelect || basketQty < 1) return;
     setBasketIngredients([...basketIngredients, { nombre: basketSelect, qty: basketQty }]);
@@ -55,64 +57,52 @@ export default function TabCrearProducto() {
 
   const handleIsBasketChange = (checked: boolean) => {
     setIsBasket(checked);
-    if (checked) {
-      setVariantes([{ unidad: 'Canasta', precio: '' }]);
-    } else {
-      setVariantes([{ unidad: 'Libra', precio: '' }]);
-    }
+    setVariantes([{ unidad: checked ? 'Canasta' : 'Libra', precio: '' }]);
   };
 
+  // --- ENVÍO DEL FORMULARIO USANDO SERVER ACTIONS ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (isBasket && basketIngredients.length === 0) return alert("Una canasta debe tener al menos un producto.");
     if (variantes.some(v => !v.unidad || !v.precio)) return alert("Completa todas las variantes.");
+    
+    // (Opcional) Más adelante cambiaremos este confirm() por un Modal moderno
     if (!confirm(`¿Crear ${isBasket ? 'Canasta' : 'Producto'} "${nombre}"?`)) return;
 
     setLoading(true);
-    try {
-      let descripcionFinal = isBasket 
-        ? "Contiene: " + basketIngredients.map(i => `${i.qty}x ${i.nombre}`).join(', ')
-        : descripcion;
+    
+    // Preparamos la descripción final
+    const descripcionFinal = isBasket 
+      ? "Contiene: " + basketIngredients.map(i => `${i.qty}x ${i.nombre}`).join(', ')
+      : descripcion;
 
-      let imageUrl = null;
-      if (imagen) {
-        const fileExt = imagen.name.split('.').pop();
-        const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
-        const { error: uploadError } = await supabase.storage.from('productos').upload(fileName, imagen);
-        if (uploadError) throw uploadError;
-        const { data } = supabase.storage.from('productos').getPublicUrl(fileName);
-        imageUrl = data.publicUrl;
-      }
+    // Usamos FormData nativo de la web para poder enviar el archivo junto con los datos
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('descripcion', descripcionFinal);
+    formData.append('categoria_id', categoriaId);
+    formData.append('es_canasta', String(isBasket));
+    formData.append('variantes', JSON.stringify(variantes)); // Convertimos array a string JSON
+    if (imagen) formData.append('imagen', imagen);
 
-      // 1. Insertar Producto
-      const { data: prodData, error: prodError } = await supabase.from('productos').insert([{
-        nombre, descripcion: descripcionFinal, categoria_id: parseInt(categoriaId), imagen_url: imageUrl, activo: true, es_canasta: isBasket
-      }]).select().single();
+    // Llamamos a la Server Action
+    const response = await crearProductoAction(formData);
 
-      if (prodError) throw prodError;
-
-      // 2. Insertar Variantes
-      const variantesAInsertar = variantes.map(v => ({
-        producto_id: prodData.id, unidad: v.unidad, precio: parseFloat(v.precio), stock_disponible: true
-      }));
-
-      const { error: varError } = await supabase.from('variantes').insert(variantesAInsertar);
-      if (varError) throw varError;
-
-      alert("✅ Guardado exitosamente");
+    if (response.success) {
+      alert("✅ Guardado exitosamente"); // Cambiaremos esto por Sonner/Toast luego
       // Resetear formulario
       setNombre(''); setDescripcion(''); setImagen(null); setBasketIngredients([]); setIsBasket(false);
       setVariantes([{ unidad: 'Libra', precio: '' }]);
       const fileInput = document.getElementById('prod-img') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
-
-    } catch (error: any) {
-      alert("Error al guardar: " + error.message);
-    } finally {
-      setLoading(false);
+    } else {
+      alert("Error al guardar: " + response.error);
     }
+    
+    setLoading(false);
   };
 
+  // El Renderizado JSX se mantiene exactamente igual que tu diseño original
   return (
     <div className="animate-in fade-in duration-300">
       <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100 max-w-3xl mx-auto">
@@ -156,7 +146,7 @@ export default function TabCrearProducto() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className="p-3 border border-gray-200 rounded-xl outline-none focus:border-green-500 bg-white" required>
-              {categorias.map(c => <option key={c.id} value={c.id}>{c.nombre}</option>)}
+              {categorias.map(c => <option key={c.id} value={c.id.toString()}>{c.nombre}</option>)}
             </select>
             <input type="file" id="prod-img" accept="image/*" onChange={(e) => setImagen(e.target.files?.[0] || null)} className="p-2 border border-gray-200 rounded-xl text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-bold file:bg-green-50 file:text-green-700 hover:file:bg-green-100" />
           </div>

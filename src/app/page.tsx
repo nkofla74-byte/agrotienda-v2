@@ -1,11 +1,13 @@
 import { createClient } from "@/utils/supabase/server";
 import ProductCard from "@/components/ProductCard";
-import Hero from "@/components/Hero";     // <-- NUEVO IMPORT
-import Footer from "@/components/Footer"; // <-- NUEVO IMPORT
+import Hero from "@/components/Hero";
+import NuestraHistoria from "@/components/NuestraHistoria"; // <-- NUEVO IMPORT
+import Footer from "@/components/Footer";
 
 export default async function Home() {
   const supabase = await createClient();
 
+  // Obtenemos los productos activos
   const { data: productos, error } = await supabase
     .from('productos')
     .select(`*, variantes(*), categorias(nombre)`)
@@ -18,8 +20,13 @@ export default async function Home() {
 
   return (
     <>
-      <Hero /> {/* <-- INYECTAMOS EL HERO AL INICIO */}
+      {/* 1. HERO INICIAL (Con la info de cierres y "Cómo funciona") */}
+      <Hero /> 
 
+      {/* 2. NUESTRA HISTORIA Y CARRUSEL (Tiene el id="nuestra-historia") */}
+      <NuestraHistoria />
+
+      {/* 3. CATÁLOGO DE PRODUCTOS */}
       <main id="productos" className="min-h-screen p-8 bg-slate-50">
         <div className="max-w-7xl mx-auto py-12">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
@@ -37,7 +44,8 @@ export default async function Home() {
         </div>
       </main>
 
-      <Footer /> {/* <-- INYECTAMOS EL FOOTER AL FINAL */}
+      {/* 4. FOOTER */}
+      <Footer />
     </>
   );
 }

@@ -7,7 +7,7 @@ import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import Navbar from "@/components/Navbar";
 import CartDrawer from "@/components/CartDrawer";
 import { CartProvider } from "@/context/CartContext";
-import TourWrapper from "@/components/TourWrapper"; // <-- NUEVO IMPORT LIMPIO
+import TourWrapper from "@/components/TourWrapper"; 
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

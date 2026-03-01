@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { formatMoney, escapeHTML } from '@/utils/format';
 
 // IMPORTAMOS LOS COMPONENTES MODULARES
 import TabInventario from './TabInventario';
@@ -37,13 +38,7 @@ export default function DashboardClient({ userEmail }: { userEmail: string }) {
     if (!error) loadPedidos();
   };
 
-  const formatMoney = (amount: number) => 
-    new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(amount);
-
-  const escapeHTML = (str: string) => {
-    if (!str) return '';
-    return str.toString().replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]!);
-  };
+  // Se eliminaron formatMoney y escapeHTML locales porque ya vienen del import en la línea 6
 
   useEffect(() => {
     if (activeTab === 'pedidos') loadPedidos();

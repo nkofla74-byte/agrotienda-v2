@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@/utils/supabase/client';
+import { toggleEstadoProducto, archivarProducto } from '@/app/actions/adminActions';
+import { Producto } from '@/types'; // Importamos el tipo
 
 export default function TabInventario() {
-  const [productos, setProductos] = useState<any[]>([]);
+  const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
   const supabase = createClient();
 
   const loadInventario = async () => {
@@ -15,7 +18,7 @@ export default function TabInventario() {
       .select('*, variantes(*)')
       .order('created_at', { ascending: false });
     
-    if (!error && data) setProductos(data);
+    if (!error && data) setProductos(data as Producto[]);
     setLoading(false);
   };
 
@@ -23,19 +26,27 @@ export default function TabInventario() {
     loadInventario();
   }, []);
 
-  const toggleProduct = async (id: number, estadoActual: boolean) => {
-    const { error } = await supabase.from('productos').update({ activo: !estadoActual }).eq('id', id);
-    if (!error) loadInventario();
+  const handleToggle = async (id: number, estadoActual: boolean) => {
+    setActionLoading(id); // Bloqueamos los botones de este producto
+    const res = await toggleEstadoProducto(id, estadoActual);
+    if (res.success) {
+      await loadInventario(); // Recargamos para ver el cambio
+    } else {
+      alert("Error: " + res.error);
+    }
+    setActionLoading(null); // Desbloqueamos
   };
 
-  const deleteProduct = async (id: number) => {
-    if (!confirm("⚠️ ¿Eliminar este producto/canasta?\nEsta acción no se puede deshacer.")) return;
-    const { error } = await supabase.from('productos').delete().eq('id', id);
-    if (!error) {
-      loadInventario();
+  const handleDelete = async (id: number) => {
+    if (!confirm("⚠️ ¿Archivar este producto/canasta?\nDesaparecerá de la tienda pero se mantendrá en el historial de base de datos.")) return;
+    setActionLoading(id);
+    const res = await archivarProducto(id);
+    if (res.success) {
+      await loadInventario();
     } else {
-      alert("Error al eliminar: " + error.message);
+      alert("Error al archivar: " + res.error);
     }
+    setActionLoading(null);
   };
 
   const formatMoney = (amount: number) => 
@@ -86,16 +97,18 @@ export default function TabInventario() {
 
               <div className="grid grid-cols-2 gap-2 mt-auto">
                 <button 
-                  onClick={() => toggleProduct(p.id, p.activo)} 
-                  className={`flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition ${p.activo ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
+                  onClick={() => handleToggle(p.id, p.activo)} 
+                  disabled={actionLoading === p.id}
+                  className={`flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed ${p.activo ? 'bg-orange-50 text-orange-600 hover:bg-orange-100' : 'bg-green-50 text-green-600 hover:bg-green-100'}`}
                 >
-                  {p.activo ? 'Ocultar' : 'Mostrar'}
+                  {actionLoading === p.id ? 'Cargando...' : (p.activo ? 'Ocultar' : 'Mostrar')}
                 </button>
                 <button 
-                  onClick={() => deleteProduct(p.id)} 
-                  className="flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 transition"
+                  onClick={() => handleDelete(p.id)} 
+                  disabled={actionLoading === p.id}
+                  className="flex items-center justify-center gap-1 py-2 rounded-xl text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Eliminar
+                  {actionLoading === p.id ? '...' : 'Archivar'}
                 </button>
               </div>
             </div>
