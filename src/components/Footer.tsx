@@ -23,7 +23,7 @@ export default function Footer() {
           {/* Columna 1: Marca y Redes Sociales */}
           <div className="lg:pr-4">
             <h4 className="font-black text-3xl mb-4 flex items-center gap-2 tracking-tight text-white">
-              La Floresta <span className="text-green-400">🌿</span>
+               AgroTienda La Floresta <span className="text-green-400">🌿</span>
             </h4>
             <p className="text-slate-300 text-sm leading-relaxed mb-6">
               Del campo a tu mesa 🚜. Cultivamos con amor en Fresno, Tolima para llevar la mejor calidad directamente a tu hogar en Mosquera 🥑🍅.
@@ -31,15 +31,16 @@ export default function Footer() {
             
             {/* NUEVO: Botones de Redes Sociales */}
             <div className="flex gap-4">
-              <a href="#" aria-label="Facebook" className="bg-slate-700/50 p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm hover:shadow-green-500/50">
+              <a href="https://www.facebook.com/" aria-label="Facebook" className="bg-slate-700/50 p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm hover:shadow-green-500/50">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>
               </a>
-              <a href="#" aria-label="Instagram" className="bg-slate-700/50 p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm hover:shadow-green-500/50">
+              <a href="https://www.instagram.com/" aria-label="Instagram" className="bg-slate-700/50 p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm hover:shadow-green-500/50">
                 <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M7.8,2H16.2C19.4,2 22,4.6 22,7.8V16.2A5.8,5.8 0 0,1 16.2,22H7.8C4.6,22 2,19.4 2,16.2V7.8A5.8,5.8 0 0,1 7.8,2M7.6,4A3.6,3.6 0 0,0 4,7.6V16.4C4,18.39 5.61,20 7.6,20H16.4A3.6,3.6 0 0,0 20,16.4V7.6C20,5.61 18.39,4 16.4,4H7.6M17.25,5.5A1.25,1.25 0 0,1 18.5,6.75A1.25,1.25 0 0,1 17.25,8A1.25,1.25 0 0,1 16,6.75A1.25,1.25 0 0,1 17.25,5.5M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"/></svg>
               </a>
               <a href="https://wa.me/573182359277" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="bg-slate-700/50 p-3 rounded-full hover:bg-green-500 hover:text-white transition-all transform hover:-translate-y-1 shadow-sm hover:shadow-green-500/50">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M16.75,22.16L14,19.41L15.41,18L16.75,19.34L20.84,15.25L22.25,16.66L16.75,22.16M6.62,10.79C8.06,13.62 10.38,15.93 13.21,17.38L15.41,15.18C15.68,14.9 16.08,14.82 16.43,14.94C17.55,15.31 18.76,15.51 20,15.51C20.55,15.51 21,15.96 21,16.51V20C21,20.55 20.55,21 20,21C10.61,21 3,13.39 3,4C3,3.45 3.45,3 4,3H7.5C8.05,3 8.5,3.45 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/></svg>
-              </a>
+<svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+  <path d="M12.04 2C6.53 2 2.06 6.47 2.06 11.98C2.06 13.75 2.52 15.47 3.39 17L2.02 22L7.13 20.67C8.59 21.46 10.23 21.89 11.91 21.89C17.42 21.89 21.89 17.42 21.89 11.91C21.89 6.4 17.42 2 11.91 2M12.04 3.61C16.63 3.61 20.35 7.33 20.35 11.92C20.35 16.51 16.63 20.23 12.04 20.23C10.51 20.23 9.04 19.82 7.77 19.04L7.47 18.86L4.43 19.65L5.23 16.68L5.03 16.37C4.19 15.03 3.75 13.48 3.75 11.89C3.75 7.3 7.48 3.61 12.04 3.61M9.04 6.74C8.84 6.74 8.51 6.81 8.24 7.11C7.97 7.41 7.21 8.12 7.21 9.56C7.21 11 8.26 12.39 8.41 12.59C8.56 12.79 10.47 15.74 13.39 17C14.09 17.3 14.63 17.48 15.05 17.62C15.75 17.84 16.39 17.81 16.89 17.74C17.44 17.65 18.6 17.04 18.84 16.36C19.08 15.68 19.08 15.1 19 15C18.93 14.89 18.73 14.83 18.43 14.68C18.13 14.53 16.65 13.8 16.38 13.7C16.1 13.6 15.9 13.55 15.7 13.85C15.5 14.15 14.93 14.83 14.75 15.03C14.58 15.23 14.41 15.25 14.11 15.1C13.81 14.95 12.85 14.64 11.71 13.62C10.82 12.83 10.22 11.85 10.05 11.55C9.87 11.25 10.03 11.09 10.18 10.94C10.32 10.79 10.49 10.59 10.64 10.41C10.79 10.23 10.84 10.11 10.94 9.91C11.04 9.71 10.99 9.54 10.91 9.39C10.84 9.24 10.22 7.73 9.96 7.1C9.71 6.48 9.45 6.57 9.26 6.56C9.07 6.55 8.87 6.55 8.67 6.55"/>
+</svg>              </a>
             </div>
           </div>
 
