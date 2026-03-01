@@ -121,7 +121,7 @@ export default function Footer() {
           {/* CRÉDITOS DEL DESARROLLADOR */}
           <p className="text-sm text-slate-400 font-medium flex items-center gap-1.5">
             Sitio web creado por 
-            <a href="#" className="text-green-400 font-black tracking-wider hover:text-white transition-colors bg-green-500/10 hover:bg-green-500 px-2 py-0.5 rounded-md">
+            <a href="https://github.com/nkofla74-byte?tab=repositories" className="text-green-400 font-black tracking-wider hover:text-white transition-colors bg-green-500/10 hover:bg-green-500 px-2 py-0.5 rounded-md">
               JRXDEVS
             </a> 🚀
           </p>
