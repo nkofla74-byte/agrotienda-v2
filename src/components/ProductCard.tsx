@@ -167,7 +167,7 @@ export default function ProductCard({ product }: { product: Producto }) {
                     product.descripcion.split('Contenido: ')[1].split(', ').map((item, idx) => (
                       <div key={idx} className="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border border-slate-100">
                         <span className="bg-green-100 text-green-700 w-10 h-10 rounded-lg flex items-center justify-center font-black text-sm">
-                          {item.split('x ')[0]}x
+                          {item.split('libras ')[0]}x
                         </span>
                         <span className="font-bold text-slate-700 text-base">
                           {item.split('x ')[1]}
