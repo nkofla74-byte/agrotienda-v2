@@ -3,6 +3,19 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  /* Colores específicos para inputs en modo claro */
+  --input-text: #111827; /* slate-900 */
+  --input-placeholder: #64748b; /* slate-500 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    /* Colores específicos para inputs en modo oscuro */
+    --input-text: #f8fafc; /* slate-50 */
+    --input-placeholder: #94a3b8; /* slate-400 */
+  }
 }
 
 @theme inline {
@@ -12,33 +25,29 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Capa base para asegurar legibilidad global */
+@layer base {
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
+    @apply antialiased transition-colors duration-200;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}/*
- Animación para la cinta transportadora de imágenes */
-@keyframes scroll-infinite {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
+  /* Garantía para formularios: PC y Móvil */
+  input, select, textarea {
+    color: var(--input-text) !important;
+    background-color: transparent;
+    @apply placeholder:text-slate-400 dark:placeholder:text-slate-500;
+  }
 
-.animate-scroll-infinite {
-  /* 40s es la velocidad. Cámbialo si lo quieres más rápido o más lento */
-  animation: scroll-infinite 40s linear infinite;
-  width: max-content;
-}
-
-/* Pausar la cinta si el usuario pone el mouse encima para ver bien una foto */
-.animate-scroll-infinite:hover {
-  animation-play-state: paused;
+  /* Evitar que iOS/Android cambien colores en formularios automáticamente */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--input-text);
+    transition: background-color 5000s ease-in-out 0s;
+  }
 }
 
 /* Animación para la cinta transportadora de imágenes */
@@ -48,12 +57,10 @@ body {
 }
 
 .animate-scroll-infinite {
-  /* 40s es la velocidad. Cámbialo si lo quieres más rápido o más lento */
   animation: scroll-infinite 40s linear infinite;
   width: max-content;
 }
 
-/* Pausar la cinta si el usuario pone el mouse encima para ver bien una foto */
 .animate-scroll-infinite:hover {
   animation-play-state: paused;
 }
